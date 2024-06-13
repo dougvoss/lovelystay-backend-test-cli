@@ -3,7 +3,7 @@ import { config } from 'dotenv';
 
 config();
 
-const databaseUrl = process.env.DATABASE_URL ?? "http:localhost"
+const databaseUrl = process.env.DATABASE_URL ?? 'http:localhost';
 
 const pgp = pgPromise();
 const db = pgp(databaseUrl);

@@ -2,6 +2,11 @@
 
 This command-line application allows you to obtain user information from GitHub and store it in a PostgreSQL database.
 
+## Prerequisites
+
+- Node.js v20.14.0 or higher
+- PostgreSQL v12.13 or higher
+
 ## Configuration
 
 1. Clone the repository.
@@ -68,6 +73,14 @@ Run tests and generate coverage report:
 
 ```
 npm run test:coverage
+```
+
+## Lint
+
+Run lint:
+
+```
+npm run lint
 ```
 
 ## Licence

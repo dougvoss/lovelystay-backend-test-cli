@@ -1,5 +1,7 @@
-import { config } from "dotenv";
-import axios, { AxiosError, HttpStatusCode } from "axios";
+import { config } from 'dotenv';
+import axios, { AxiosError, HttpStatusCode } from 'axios';
+import { IGitHubUserInfo } from '../interface/IGitHubUserInfo';
+import { IGitHubUserRepos } from '../interface/IGitHubUserRepos';
 
 config();
 
@@ -9,7 +11,6 @@ export const getUserInfo = async (
   username: string
 ): Promise<IGitHubUserInfo> => {
   try {
-    console.log(BASE_URL);
     const response = await axios
       .get(`${BASE_URL}/users/${username}`)
       .then((resp) => resp.data);
@@ -19,11 +20,12 @@ export const getUserInfo = async (
       location: response.location,
       followers: response.followers,
       following: response.following,
-      createdAt: response.created_at,
+      created_at: response.created_at
     };
 
     return result;
   } catch (error: any) {
+    // eslint-disable-next-line max-len
     let errorMessage = `Error on try to get github user info. Cause: ${error.message}`;
 
     if (
@@ -52,7 +54,7 @@ export const getUserRepos = async (
         language: item.language,
         private: item.private,
         forks: item.forks,
-        openIssues: item.open_issues,
+        openIssues: item.open_issues
       };
       return reposItem;
     });

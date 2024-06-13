@@ -1,28 +1,31 @@
-import db from "../../db";
+import _repositoryHelper from '../../helpers/repository.helper';
+import { ILanguage } from '../interface/ILanguage';
 
-export const createLanguage = async (
-  userId: number,
-  language: string
-): Promise<string> => {
+export const upsertLanguage = async (language: ILanguage): Promise<string> => {
   try {
-    const created = await db.one(
-      `INSERT INTO languages (user_id, language) VALUES ($1, $2) RETURNING id`,
-      [userId, language]
-    );
+    const result = await _repositoryHelper.upsertOne<ILanguage>({
+      table: 'language',
+      data: language,
+      conflictFields: ['language', 'user_id'],
+      returningFields: ['id']
+    });
 
-    return created.id;
+    return result.id;
   } catch (error: any) {
-    throw new Error(
-      `Error on try to insert language data. Cause: ${error.message}`
-    );
+    throw new Error(`Error on try to upsert language. Cause: ${error.message}`);
   }
 };
 
-export const createLanguages = async (userId: number, languages: string[]) => {
+export const upsertLanguages = async (userId: number, languages: string[]) => {
   const promises: any[] = [];
 
   languages.forEach((language) => {
-    promises.push(createLanguage(userId, language));
+    promises.push(
+      upsertLanguage({
+        language,
+        user_id: userId
+      })
+    );
   });
 
   const ids = await Promise.all(promises);

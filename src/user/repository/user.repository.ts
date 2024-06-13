@@ -1,32 +1,26 @@
-import db from "../../db";
+import _repositoryHelper from '../../helpers/repository.helper';
+import db from '../../db';
+import { IUser } from '../interface/IUser';
 
-export const createUser = async (user: IUser): Promise<number> => {
+export const upsertUser = async (user: IUser): Promise<number> => {
   try {
-    const created = await db.one(
-      `INSERT INTO users (
-        name, 
-        location, 
-        followers, 
-        following, 
-        created_at
-      ) VALUES (
-        $1, $2, $3, $4, $5
-      ) RETURNING id`,
-      [user.name, user.location, user.followers, user.following, user.createdAt]
-    );
+    const result = await _repositoryHelper.upsertOne<IUser>({
+      table: 'user',
+      data: user,
+      conflictFields: ['username'],
+      returningFields: ['id']
+    });
 
-    return created.id;
+    return result.id;
   } catch (error: any) {
-    throw new Error(
-      `Error on try to insert user data. Cause: ${error.message}`
-    );
+    throw new Error(`Error on try to upsert user. Cause: ${error.message}`);
   }
 };
 
 export const findUsers = async (filter?: string): Promise<IUser[]> => {
   try {
     const filterParams: any[] = [];
-    let where = "";
+    let where = '';
 
     if (filter) {
       where = `
@@ -40,8 +34,8 @@ export const findUsers = async (filter?: string): Promise<IUser[]> => {
       SELECT DISTINCT 
           u.*,
           COALESCE(STRING_AGG(l.language, ', '), '') as languages
-      FROM users as u 
-      LEFT JOIN languages as l ON l.user_id = u.id
+      FROM "user" as u 
+      LEFT JOIN "language" as l ON l.user_id = u.id
       ${where}
       GROUP BY u.id
     `;
@@ -51,12 +45,13 @@ export const findUsers = async (filter?: string): Promise<IUser[]> => {
     return rows.map((row) => {
       const user: IUser = {
         id: row.id,
+        username: row.username,
         name: row.name,
         location: row.location,
         followers: row.followers,
         following: row.following,
         languages: row.languages,
-        createdAt: row.created_at,
+        created_at: row.created_at
       };
       return user;
     });

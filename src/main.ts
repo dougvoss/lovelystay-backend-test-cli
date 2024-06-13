@@ -1,6 +1,6 @@
-import yargs from "yargs";
-import { hideBin } from "yargs/helpers";
-import { addUser, listUsers } from "./user/service/user.service";
+import yargs from 'yargs';
+import { hideBin } from 'yargs/helpers';
+import { addUser, listUsers } from './user/service/user.service';
 
 interface Args {
   addUser?: string;
@@ -9,16 +9,16 @@ interface Args {
 
 export function parseArgs(): Args {
   const argv = yargs(hideBin(process.argv))
-    .option("addUser", {
-      type: "string",
-      group: "addUser",
+    .option('addUser', {
+      type: 'string',
+      group: 'addUser',
       requiresArg: true,
-      describe: "Add user on database",
+      describe: 'Add user on database'
     })
-    .option("listUsers", {
-      group: "listUsers",
-      type: "string",
-      describe: "List users from database, if value ",
+    .option('listUsers', {
+      group: 'listUsers',
+      type: 'string',
+      describe: 'List users from database, if value '
     })
     .parseSync();
 
@@ -29,14 +29,14 @@ export const main = async () => {
   try {
     const args = parseArgs();
 
-    args.hasOwnProperty("addUser");
+    Object.prototype.hasOwnProperty.call(args, 'addUser');
 
     if (args.addUser) {
-      await addUser(args.addUser);
-    } else if (args.hasOwnProperty("listUsers")) {
+      await addUser(args.addUser.toLowerCase());
+    } else if (Object.prototype.hasOwnProperty.call(args, 'listUsers')) {
       await listUsers(args.listUsers);
     } else {
-      console.log("Unknown command");
+      console.log('Unknown command');
     }
   } catch (error) {
     console.error(error);

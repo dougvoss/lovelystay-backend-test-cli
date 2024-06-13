@@ -6,9 +6,6 @@ module.exports = {
   moduleFileExtensions: ["ts", "js"],
   coverageDirectory: "./coverage",
   transform: {
-    "^.+\\.ts$": "ts-jest",
-  },
-  transform: {
     "^.+\\.ts$": [
       "ts-jest",
       {
